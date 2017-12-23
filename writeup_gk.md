@@ -64,6 +64,7 @@ def image_cleanup(image, kernel_size):
     return cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)
 ```
 ![figure 2- blur filter applied to image](https://user-images.githubusercontent.com/12469124/34318439-831966be-e795-11e7-9f78-e275c01042ad.jpeg)
+
 figure 2- blur filter applied to image
 
 ### 2. Convert the image to grayscale
@@ -76,6 +77,7 @@ def discard_colors(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 ```
 ![figure 3- grayscale transformation applied to blurred image](https://user-images.githubusercontent.com/12469124/34318440-839b6948-e795-11e7-962e-fc6ac2db520e.jpeg)
+
 figure 3- grayscale transformation applied to blurred image
 
 ### 3. Detect the edges
@@ -89,6 +91,7 @@ def detect_edges(image, low_threshold, high_threshold):
     return cv2.Canny(image, low_threshold, high_threshold)
 ```
 ![figure 4- canny edge detection applied to grayscale image](https://user-images.githubusercontent.com/12469124/34318441-8407b404-e795-11e7-95bc-ec7650503044.jpeg)
+
 figure 4- canny edge detection applied to grayscale image
 
 ### 4. Masking the region of interest
@@ -119,6 +122,7 @@ vertices = np.array([[(dx1, ysize), (dx2, dy), (xsize - dx2, dy), (xsize - dx1, 
 image = region_of_interest(image, vertices)
 ```
 ![figure 5- masking the region of interest](https://user-images.githubusercontent.com/12469124/34318442-8440ab10-e795-11e7-910f-8c14953ec46a.jpeg)
+
 figure 5- masking the region of interest
 
 ### 5. Identify the location of lane lines on the road
@@ -140,6 +144,7 @@ max_line_gap = 200
 lines = hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap)
 ```
 ![figure 6- hough transformation returns a list of lines](https://user-images.githubusercontent.com/12469124/34318443-8480b188-e795-11e7-96df-d056f4656136.jpeg)
+
 figure 6- hough transformation returns a list of lines
 
 ### 6. Separate  the lines
@@ -232,6 +237,7 @@ final_image = weighted_image(line_image, image)
 return final_image
 ``` 
 ![figure 7- masking the region of interest](https://user-images.githubusercontent.com/12469124/34318444-84bb9780-e795-11e7-9b0b-275e86fd01e0.jpeg)
+
 figure 7- masking the region of interest
 
 ## Potential shortcomings with the current pipeline
