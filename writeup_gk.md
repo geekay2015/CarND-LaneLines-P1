@@ -1,6 +1,5 @@
 # **Self-Driving Car Engineer Nanodegree** 
 
----
 
 **Finding Lane Lines on the Road**
 
@@ -17,19 +16,18 @@ The goals / steps of this project are the following:
 
 ### Reflection
 
-### 1. My Approach to the Lane line Detection for Self Driving Cars.
+### My Approach to the Lane line Detection for Self Driving Cars.
 
 I developed a simple Lane Detection pipeline using the below algorithms/libraries-
-##1. Python 3.5, Jupyter Notebook
-##2. OpenCV Package - For Computer Vision Algorithms
-##3. NumPy Package  - For doing scientifc computation
-##4. SciPy Package  - For doing scientifc computation
-##5. matplotlib     - A Python 2D plotting library
-##5. pyplot         - for interactive plot generation
-##6. Gaussian blur  - Image processing Algorithm using Gaussian Function
-##7. Canny          - is an edge detection algorithm
-##8. Hough transform- An  algorithm to identify location of lane lines on the Road
-##9. Linear regression - TO find the best relationship between a group of lane points
+* OpenCV Package - For Computer Vision Algorithms
+* NumPy Package  - For doing scientifc computation
+* SciPy Package  - For doing scientifc computation
+* matplotlib     - A Python 2D plotting library
+* pyplot         - for interactive plot generation
+* Gaussian blur  - Image processing Algorithm using Gaussian Function
+* Canny          - is an edge detection algorithm
+* Hough transform- An  algorithm to identify location of lane lines on the Road
+* Linear regression - TO find the best relationship between a group of lane points
 
 Below are the steps in my Lane Detection Pipeline.
 ##1. Image cleanup and noise removal
