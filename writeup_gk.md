@@ -15,7 +15,7 @@ We will be leveraging some of the below popular algorithms and packages:
 * **Hough transform**   - An  algorithm to identify location of lane lines on the Road
 * **Linear regression** - TO find the best relationship between a group of lane points
 
-### Prerequisites
+## Prerequisites
 * Set up the CarND Term1 Starter Kit in conda enviornment
 ```
 # clone the carnd-term1 repository
@@ -44,24 +44,13 @@ import cv2
 jupyter notebook P1.ipynb
 
 ```
+![picture](./test_images/UnprocessFrameLeft.jpeg?raw=true "Figure 1.1: An unprocessed frame (left)")
+![picture](./test_images/framewithLanesAutomaticallyIndicatedRight.jpeg?raw=true "Figure 1.2: A frame with lanes automatically indicated (right).")
 
-[//]: # (Image References)
+## Lane Detection Pipeline
+Below are the steps involved in my Lane Detection Pipeline.
 
-[image1]: ./test_images/UnprocessFrameLeft.jpeg 
-[image2]: ./test_images/framewithLanesAutomaticallyIndicatedRight.jpeg
-"Figure 1: an unprocessed frame (left) and a frame with lanes automatically indicated (right)."
-
----
-
-### Reflection
-
-### My Approach to the Lane line Detection for Self Driving Cars.
-
-I developed a simple Lane Detection pipeline using the below algorithms/libraries-
-
-
-Below are the steps in my Lane Detection Pipeline.
-##1. Image cleanup and noise removal
+### 1. Image cleanup and noise removal
 I used Gaussian blur algorithm to clean up the image. 
 Gaussian blur algorithm is applied to remove the noise and tiny details from the image such as distant objects that are irrelevant for our purpose
 
@@ -70,7 +59,7 @@ def image_cleanup(image, kernel_size):
     return cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)
 ```
 
-##2. Convert the image to grayscale
+### 2. Convert the image to grayscale
 convert the image to grayscale before isolating the region of interest
 highlight pixels with a higher brightness value, including the ones defining marking lanes
 
@@ -80,7 +69,7 @@ def discard_colors(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 ```
 
-##3. Detect the edges
+### 3. Detect the edges
 I applied the Canny edge detection algorithm which detects edges on a picture by looking for quick changes in color between a pixel and its neighbors. 
 The blur and grayscale step will help make the main lane lines stand out. 
 The result will give a black and white image. 
@@ -91,7 +80,7 @@ def detect_edges(image, low_threshold, high_threshold):
     return cv2.Canny(image, low_threshold, high_threshold)
 ```
 
-##4. Masking the region of interest
+### 4. Masking the region of interest
 ```
 def region_of_interest(image, vertices):
     # defining a blank mask to start with
@@ -119,7 +108,7 @@ vertices = np.array([[(dx1, ysize), (dx2, dy), (xsize - dx2, dy), (xsize - dx1, 
 image = region_of_interest(image, vertices)
 ```
 
-##5. Identify the location of lane lines on the road
+### 5. Identify the location of lane lines on the road
 The Hough transform algorithm is applied-
 to extracts all the lines passing through each of our edge points
 group them by similarity 
@@ -137,7 +126,7 @@ max_line_gap = 200
 
 lines = hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap)
 ```
-##6. Separate  the lines
+### 6. Separate  the lines
 The Hough transformation gives us back multiple lines.
 So we need to pick  only two distinct lanes - left and right lane markeres for our car to drive in between. 
 
@@ -158,7 +147,7 @@ def separate_lines(lines):
 right_lines, left_lines = separate_lines(lines)
 ```
 
-##7. Reject the outliers
+### 7. Reject the outliers
 reject lines with unacceptable slopes that throw off the intended slope of each line.
 
 ```
@@ -172,7 +161,7 @@ if len(right_lines) != 0 and len(left_lines) != 0:
     left = reject_outliers(left_lines, cutoff=(-0.85, -0.6))
 ```
 
-##8. Merge left and right lanes  using linear regression.
+### 8. Merge left and right lanes  using linear regression.
 
 ```
 def lines_linreg(lines_array):
@@ -195,7 +184,7 @@ bot_point = np.array([(max_y - c) / m, max_y], dtype=int)
 
 ```
 
-##9. Span the Lines
+### 9. Span the Lines
 Using some simple geometry (y = mx + b), calculate extrema. 
 I used the result of the linear regression to extrapolate to those extrema. 
 I then extended the left and right lines off across the image and clip the line using our previous region of interest.
@@ -214,7 +203,7 @@ return np.array([line], dtype=np.int32)
 
 ```
 
-##10. Draw the lines and return the final image
+### 10. Draw the lines and return the final image
 The final step is to superimpose the left and right lines onto the original image to visually validate the correctness and accuracy of our pipeline implementation.
 
 ```
@@ -227,15 +216,12 @@ final_image = weighted_image(line_image, image)
 return final_image
 ``` 
 
-### 2. Identify potential shortcomings with your current pipeline
-
-
-One potential shortcoming would be that  we decided to discard color information and rely exclusively on pixel brightness to detect lane marking on the road. 
-It works well during daylight and with a simple terrain but  the lane detection accuracy might drop significantly in less ideal conditions.
+## Potential shortcomings with the current pipeline
+One potential shortcoming would be that  we decided to discard color information and rely exclusively on pixel brightness to detect lane marking on the road. It works well during daylight and with a simple terrain but  the lane detection accuracy might drop significantly in less ideal conditions.
 
 
 
-### 3. Suggest possible improvements to your pipeline
+## possible improvements to the pipeline
 
 A possible improvement would be to transform the original image from RGB colorspace to HSV colorspace.
 we can filter out pixels which are not the given color of the lanes. 
@@ -256,7 +242,7 @@ def filter_image(image):
     return filtered_image
 ```
 
-###Conclusion
+## Conclusion
 In this project, I have developed and implemented an algorithm for detecting white and yellow colored lanes on the road. 
 The lane detection method is robust and effective in finding the exact lanes by using both color and edge orientations. 
 The main contributions are the color segmentation procedure identifying the yellow or white colored lanes followed by edge orientation in which the boundaries are eliminated, 
