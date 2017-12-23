@@ -2,18 +2,18 @@
 When we drive, we use our eyes to decide where to go. The lines on the road that show us where the lanes are act as our constant reference for where to steer the vehicle. Naturally, one of the first things we would like to do in developing a self-driving car is to automatically detect lane lines using an algorithm.
 
 ## Getting Started
-To develop a simple pipeline using OpenCV and Python for finding lane lines in an image, then apply this pipeline to a full video feed.
+To develop a simple pipeline for finding the lane lines in an image, then apply this pipeline to a full video feed.
 
-We will be leveraging some of the below algorithms:
-* OpenCV Package - For Computer Vision Algorithms
-* NumPy Package  - For doing scientifc computation
-* SciPy Package  - For doing scientifc computation
-* matplotlib     - A Python 2D plotting library
-* pyplot         - for interactive plot generation
-* Gaussian blur  - Image processing Algorithm using Gaussian Function
-* Canny          - is an edge detection algorithm
-* Hough transform- An  algorithm to identify location of lane lines on the Road
-* Linear regression - TO find the best relationship between a group of lane points
+We will be leveraging some of the below popular algorithms and packages:
+* **OpenCV**            - Algorithms for Computer Vision 
+* **NumPy**             - Algorithms for Scientifc computation
+* **SciPy**             - Algorithms for Scientifc computation
+* **Matplotlib**        - A Python 2D plotting library
+* **Pyplot**            - A Python library for interactive plot generation
+* **Gaussian blur**     - Algorithms for Image processing
+* **Canny**             - Algorithm for edge detection in an image
+* **Hough transform**   - An  algorithm to identify location of lane lines on the Road
+* **Linear regression** - TO find the best relationship between a group of lane points
 
 ### Prerequisites
 * Set up the CarND Term1 Starter Kit in conda enviornment
@@ -47,7 +47,9 @@ jupyter notebook P1.ipynb
 
 [//]: # (Image References)
 
-[image1]: ./examples/grayscale.jpg "Grayscale"
+[image1]: ./test_images/UnprocessFrameLeft.jpeg 
+[image2]: ./test_images/framewithLanesAutomaticallyIndicatedRight.jpeg
+"Figure 1: an unprocessed frame (left) and a frame with lanes automatically indicated (right)."
 
 ---
 
