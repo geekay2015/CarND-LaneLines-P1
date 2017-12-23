@@ -1,5 +1,5 @@
 ## **Finding the Lane Lines on the Road**
-![projectbackground](https://user-images.githubusercontent.com/12469124/34321309-10adf1b8-e7da-11e7-9161-60451c0a60c0.jpeg)
+![projectbackground](https://user-images.githubusercontent.com/12469124/34321395-3ab68982-e7dc-11e7-9a31-9bf7284482ec.jpeg)
 
 When we drive, we use our eyes to decide where to go. The lines on the road that show us where the lanes are act as our constant reference for where to steer the vehicle. Naturally, one of the first things we would like to do in developing a self-driving car is to automatically detect lane lines using an algorithm.
 
