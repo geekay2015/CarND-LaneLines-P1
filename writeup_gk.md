@@ -55,15 +55,40 @@ Figure 1.2: A frame with lanes automatically indicated
 ## Lane Detection Pipeline
 Below are the steps involved in my Lane Detection Pipeline.
 
+### 0. Read the image file
+```
+#importing some useful packages
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import numpy as np
+import cv2
+%matplotlib inline
+
+#reading in an image
+image = mpimg.imread('test_images/solidWhiteRight.jpg')
+
+#printing out some stats and plotting
+print('This image is:', type(image), 'with dimensions:', image.shape)
+plt.imshow(image)
+
+```
+
 ### 1. Image cleanup and noise removal
 I used Gaussian blur algorithm to clean up the image. 
 Gaussian blur algorithm is applied to remove the noise and tiny details from the image such as distant objects that are irrelevant for our purpose
 
 ```
+# Define a function to Apply a Gaussian Noise kernel
 def gaussian_blur(image, kernel_size):
     return cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)
 
-gausBlur = gaussian_blur(image, 5)
+# Define a kernel size and 
+kernel_size = 5
+
+# apply Gaussian smoothing
+gray_blur = gaussian_blur(image, kernel_size)
+
+# plot the image
 plt.imshow(gausBlur)
 
 ```
@@ -77,8 +102,17 @@ highlight pixels with a higher brightness value, including the ones defining mar
 
 I used cv2.cvtColor a Grayscale Image Convertor function with parameters - image and cv2.COLOR_BGR2GRAY
 ```
-def discard_colors(image):
+# Define aFunction to convert the image to grayscale
+# This will return an image with only one color channel
+def gray_scale_transform(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Apply the gray scale transformation
+gray = gray_scale_transform(gray_blur)
+
+# plot the image
+plt.imshow(gray,cmap='gray')
+
 ```
 ![figure 3- grayscale transformation applied to blurred image](https://user-images.githubusercontent.com/12469124/34318440-839b6948-e795-11e7-962e-fc6ac2db520e.jpeg)
 
@@ -91,8 +125,20 @@ The result will give a black and white image.
 
 I used cv2.Canny function with parameters Image, low threshold, high threshold
 ```
+# Define a function to Apply the Canny transformation
 def detect_edges(image, low_threshold, high_threshold):
     return cv2.Canny(image, low_threshold, high_threshold)
+
+# Define  parameters for Canny
+low_threshold = 50
+high_threshold = 150
+
+#Apply the cany transformation
+edges = detect_edges(gray, low_threshold,high_threshold)
+
+# plot the image
+plt.imshow(edges)
+
 ```
 ![figure 4- canny edge detection applied to grayscale image](https://user-images.githubusercontent.com/12469124/34318441-8407b404-e795-11e7-95bc-ec7650503044.jpeg)
 
@@ -100,30 +146,46 @@ figure 4- canny edge detection applied to grayscale image
 
 ### 4. Masking the region of interest
 ```
+# Function to get the region of interest by applying an image mask
+# Only keeps the region of the image defined by the polygon formed from `vertices`. 
+# The rest of the image is set to black.
 def region_of_interest(image, vertices):
-    # defining a blank mask to start with
-    mask = np.zeros_like(image)
-   
-    # defining a 3 channel or 1 channel color to fill the mask with depending on the input image
-if len(image.shape) > 2:
+
+    #defining a blank mask to start with
+    mask = np.zeros_like(image)   
+    
+    #defining a 3 channel or 1 channel color to fill the mask with depending on the input image
+    if len(image.shape) > 2:
         channel_count = image.shape[2]  # i.e. 3 or 4 depending on your image
         ignore_mask_color = (255,) * channel_count
     else:
         ignore_mask_color = 255
-    # filling pixels inside the polygon defined by "vertices" with the fill color
+        
+    #filling pixels inside the polygon defined by "vertices" with the fill color    
     cv2.fillPoly(mask, vertices, ignore_mask_color)
-    # returning the image only where mask pixels are non-zero
+    
+    #returning the image only where mask pixels are nonzero
     masked_image = cv2.bitwise_and(image, mask)
     return masked_image
-xsize = img.shape[1]
-ysize = img.shape[0]
+
+# get the parameters for the vertices
+xsize = image.shape[1]
+ysize = image.shape[0]
 dx1 = int(0.0725 * xsize)
 dx2 = int(0.425 * xsize)
 dy = int(0.6 * ysize)
 
+
 # calculate vertices for region of interest
 vertices = np.array([[(dx1, ysize), (dx2, dy), (xsize - dx2, dy), (xsize - dx1, ysize)]], dtype=np.int32)
-image = region_of_interest(image, vertices)
+
+
+# return the image only where mask pixels are nonzero
+masked_img = region_of_interest(edges, vertices)
+
+# plot the image
+plt.imshow(masked_img)
+
 ```
 ![figure 5- masking the region of interest](https://user-images.githubusercontent.com/12469124/34318442-8440ab10-e795-11e7-910f-8c14953ec46a.jpeg)
 
