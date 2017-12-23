@@ -44,8 +44,13 @@ import cv2
 jupyter notebook P1.ipynb
 
 ```
-![picture](./test_images/UnprocessFrameLeft.jpeg?raw=true "Figure 1.1: An unprocessed frame (left)")
-![picture](./test_images/framewithLanesAutomaticallyIndicatedRight.jpeg?raw=true "Figure 1.2: A frame with lanes automatically indicated (right).")
+![Figure 1.1: An Unprocess Frame](https://user-images.githubusercontent.com/12469124/34318397-990c2444-e794-11e7-8187-bd2c60a801d6.jpeg) 
+
+Figure 1.1: An Unprocess Frame
+
+![Figure 1.2: A frame with lanes automatically indicated](https://user-images.githubusercontent.com/12469124/34318399-a053c3b0-e794-11e7-9398-8f02108bdf5b.jpeg)
+
+Figure 1.2: A frame with lanes automatically indicated
 
 ## Lane Detection Pipeline
 Below are the steps involved in my Lane Detection Pipeline.
