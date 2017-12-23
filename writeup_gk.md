@@ -60,8 +60,12 @@ I used Gaussian blur algorithm to clean up the image.
 Gaussian blur algorithm is applied to remove the noise and tiny details from the image such as distant objects that are irrelevant for our purpose
 
 ```
-def image_cleanup(image, kernel_size):
+def gaussian_blur(image, kernel_size):
     return cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)
+
+gausBlur = gaussian_blur(image, 5)
+plt.imshow(gausBlur)
+
 ```
 ![figure 2- blur filter applied to image](https://user-images.githubusercontent.com/12469124/34318439-831966be-e795-11e7-9f78-e275c01042ad.jpeg)
 
