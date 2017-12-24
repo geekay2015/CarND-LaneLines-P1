@@ -1,7 +1,7 @@
 # Self-Driving Car Engineering By Udacity
 
 ## Project: **Finding Lane Lines on the Road** 
-Devloped by **Gangadhar Kadam** in **December 2017** through the **Udacity Self Driving Car Engineer Nanodegree***
+Devloped by **Gangadhar Kadam** on **December 2017****
 ***
 
 ![projectbackground](https://user-images.githubusercontent.com/12469124/34321395-3ab68982-e7dc-11e7-9a31-9bf7284482ec.jpeg)
@@ -9,21 +9,10 @@ Devloped by **Gangadhar Kadam** in **December 2017** through the **Udacity Self 
 When we drive, we use our eyes to decide where to go. The lines on the road that show us where the lanes are act as our constant reference for where to steer the vehicle. Naturally, one of the first things we would like to do in developing a self-driving car is to automatically detect lane lines using an algorithm.
 
 In this project, I developed a pipeline on a series of individual images, and later applied the result to a video stream (really just a series of images). I validated the my result with "raw-lines-example.mp4"  test video provided in the project. When the result looked roughly same as the test video, I tried to average and/or extrapolate the line segments I detected to map out the full extent of the lane lines. 
-
-The pipeline is as follows:
-1. Apply a Gaussian smoothing algorithm to cleanup the image and noise removal
-2. convert the image to grayscale
-3. Apply Canny edge detection algorithm to detects the edges
-4. Apply an image mask to get "region of interest" in front of the vehicle
-5. Apply Hough ransform algorith to identify the location of lane lines
-8. Using the extrema of the lines generated, create two averaged lines 
-9. Create two averaged lines across frames for a smooth video playback
-10. Draw the lines to each frame
-
 ---
 
 ## Getting Started
-To develop this simple lane detection, then apply this pipeline to the test images provided and make a full video with lanes lines getting projected
+To develop this simple lane detection, then apply this pipeline to the test images provided and make a full video with lanes lines getting projected.
 
 **I have leveraged some of the below popular algorithms and packages:**
 - `OpenCV` - Algorithms for Computer Vision 
@@ -42,7 +31,7 @@ To develop this simple lane detection, then apply this pipeline to the test imag
 - `Canny` - Algorithm for edge detection in an image 
 - `Hough transform` - An algorithm to identify location of lane lines on the Road
 
-## Prerequisites
+## Preprocessing
 * Set up the CarND Term1 Starter Kit in conda enviornment
 ```
 # clone the carnd-term1 repository
@@ -71,6 +60,8 @@ import cv2
 jupyter notebook P1.ipynb
 
 ```
+
+## Unprocessed Frame Vs A frame with lanes automatically indicated
 ![Figure 1.1: An Unprocess Frame](https://user-images.githubusercontent.com/12469124/34318397-990c2444-e794-11e7-8187-bd2c60a801d6.jpeg) 
 
 Figure 1.1: An Unprocess Frame
@@ -80,8 +71,8 @@ Figure 1.1: An Unprocess Frame
 Figure 1.2: A frame with lanes automatically indicated
 
 
+* Import the Required packages
 
-## Preprocessing
 ```
 #importing some useful packages
 import matplotlib.pyplot as plt
@@ -89,8 +80,10 @@ import matplotlib.image as mpimg
 import numpy as np
 import cv2
 %matplotlib inline
+```
 
-#reading in an image
+* reading in an image
+```
 image = mpimg.imread('test_images/solidWhiteRight.jpg')
 
 #printing out some stats and plotting
@@ -129,6 +122,7 @@ gray_blur = gaussian_blur(image, kernel_size)
 plt.imshow(gausBlur)
 
 ```
+
 ![figure 2- blur filter applied to image](https://user-images.githubusercontent.com/12469124/34318439-831966be-e795-11e7-9f78-e275c01042ad.jpeg)
 
 ![gray_blur](https://user-images.githubusercontent.com/12469124/34328786-007d49c8-e8b7-11e7-9d7b-8cdc41c52b0b.jpeg)
@@ -230,8 +224,6 @@ masked_img = region_of_interest(edges, vertices)
 plt.imshow(masked_img)
 
 ```
-![figure 5- masking the region of interest](https://user-images.githubusercontent.com/12469124/34318442-8440ab10-e795-11e7-910f-8c14953ec46a.jpeg)
-
 ![regionofinterest](https://user-images.githubusercontent.com/12469124/34328790-0f478892-e8b7-11e7-9045-754b62a8c1f6.jpeg)
 
 figure 5- masking the region of interest
@@ -254,8 +246,6 @@ max_line_gap = 200
 
 lines = hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap)
 ```
-![figure 6- hough transformation returns a list of lines](https://user-images.githubusercontent.com/12469124/34318443-8480b188-e795-11e7-96df-d056f4656136.jpeg)
-
 ![houghed_image](https://user-images.githubusercontent.com/12469124/34328789-0c7d8756-e8b7-11e7-9a25-dd2803f473fd.jpeg)
 
 figure 6- hough transformation returns a list of lines
@@ -286,7 +276,6 @@ line_image = region_of_interest(line_image, vertices)
 final_image = weighted_image(line_image, image)
 return final_image
 ``` 
-![figure 7- masking the region of interest](https://user-images.githubusercontent.com/12469124/34318444-84bb9780-e795-11e7-9b0b-275e86fd01e0.jpeg)
 
 ![weighted_image](https://user-images.githubusercontent.com/12469124/34328791-11538f00-e8b7-11e7-9f99-16eed5006675.jpeg)
 
