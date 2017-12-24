@@ -48,28 +48,13 @@ conda info --envs
 source activate carnd-term1
 
 ```
-* Install all the required packages
-```
-import matplotlib.pyplot as plt
-import numpy as np
-import cv2
-```
+
 * Jupyter Notebook to build and test the pipeline
 ```
 # test the enviornment using jupyter notebook
 jupyter notebook P1.ipynb
 
 ```
-
-## Unprocessed Frame Vs A frame with lanes automatically indicated
-![Figure 1.1: An Unprocess Frame](https://user-images.githubusercontent.com/12469124/34318397-990c2444-e794-11e7-8187-bd2c60a801d6.jpeg) 
-
-Figure 1.1: An Unprocess Frame
-
-![Figure 1.2: A frame with lanes automatically indicated](https://user-images.githubusercontent.com/12469124/34318399-a053c3b0-e794-11e7-9398-8f02108bdf5b.jpeg)
-
-Figure 1.2: A frame with lanes automatically indicated
-
 
 * Import the Required packages
 
@@ -92,7 +77,16 @@ plt.imshow(image)
 
 ```
 
-## Lane Detection Pipeline
+## Unprocessed Frame Vs A frame with lanes automatically indicated
+![Figure 1.1: An Unprocess Frame](https://user-images.githubusercontent.com/12469124/34318397-990c2444-e794-11e7-8187-bd2c60a801d6.jpeg) 
+
+Figure 1.1: An Unprocess Frame
+
+![Figure 1.2: A frame with lanes automatically indicated](https://user-images.githubusercontent.com/12469124/34318399-a053c3b0-e794-11e7-9398-8f02108bdf5b.jpeg)
+
+Figure 1.2: A frame with lanes automatically indicated
+
+## The Pipeline
 The pipeline is as follows:
 1. Apply a Gaussian smoothing algorithm to cleanup the image and noise removal
 2. convert the image to grayscale
@@ -125,7 +119,7 @@ plt.imshow(gausBlur)
 
 ![figure 2- blur filter applied to image](https://user-images.githubusercontent.com/12469124/34318439-831966be-e795-11e7-9f78-e275c01042ad.jpeg)
 
-![gray_blur](https://user-images.githubusercontent.com/12469124/34328786-007d49c8-e8b7-11e7-9d7b-8cdc41c52b0b.jpeg)
+![gray_blur](https://user-images.githubusercontent.com/12469124/34328932-5a6ae008-e8bc-11e7-8f36-5dfa8405569d.jpeg)
 
 figure 2- blur filter applied to image
 
@@ -149,7 +143,7 @@ plt.imshow(gray,cmap='gray')
 ```
 ![figure 3- grayscale transformation applied to blurred image](https://user-images.githubusercontent.com/12469124/34318440-839b6948-e795-11e7-962e-fc6ac2db520e.jpeg)
 
-![gray_scaled](https://user-images.githubusercontent.com/12469124/34328787-047256b8-e8b7-11e7-8976-122728952411.jpeg)
+![gray_scaled](https://user-images.githubusercontent.com/12469124/34328933-5c089cfc-e8bc-11e7-9df5-0db1070981d8.jpeg)
 
 figure 3- grayscale transformation applied to blurred image
 
