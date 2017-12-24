@@ -9,6 +9,7 @@ Devloped by **Gangadhar Kadam** on **December 2017****
 When we drive, we use our eyes to decide where to go. The lines on the road that show us where the lanes are act as our constant reference for where to steer the vehicle. Naturally, one of the first things we would like to do in developing a self-driving car is to automatically detect lane lines using an algorithm.
 
 In this project, I developed a pipeline on a series of individual images, and later applied the result to a video stream (really just a series of images). I validated the my result with "raw-lines-example.mp4"  test video provided in the project. When the result looked roughly same as the test video, I tried to average and/or extrapolate the line segments I detected to map out the full extent of the lane lines. 
+
 ---
 
 ## Getting Started
