@@ -1,21 +1,46 @@
-## **Finding the Lane Lines on the Road**
+# Self-Driving Car Engineering By Udacity
+
+## Project: **Finding Lane Lines on the Road** 
+Devloped by **Gangadhar Kadam** in **December 2017** through the **Udacity Self Driving Car Engineer Nanodegree***
+***
+
 ![projectbackground](https://user-images.githubusercontent.com/12469124/34321395-3ab68982-e7dc-11e7-9a31-9bf7284482ec.jpeg)
 
 When we drive, we use our eyes to decide where to go. The lines on the road that show us where the lanes are act as our constant reference for where to steer the vehicle. Naturally, one of the first things we would like to do in developing a self-driving car is to automatically detect lane lines using an algorithm.
 
-## Getting Started
-To develop a simple pipeline for finding the lane lines in an image, then apply this pipeline to a full video feed.
+In this project, I developed a pipeline on a series of individual images, and later applied the result to a video stream (really just a series of images). I validated the my result with "raw-lines-example.mp4"  test video provided in the project. When the result looked roughly same as the test video, I tried to average and/or extrapolate the line segments I detected to map out the full extent of the lane lines. 
 
-We will be leveraging some of the below popular algorithms and packages:
-* **OpenCV**            - Algorithms for Computer Vision 
-* **NumPy**             - Algorithms for Scientifc computation
-* **SciPy**             - Algorithms for Scientifc computation
-* **Matplotlib**        - A Python 2D plotting library
-* **Pyplot**            - A Python library for interactive plot generation
-* **Gaussian blur**     - Algorithms for Image processing
-* **Canny**             - Algorithm for edge detection in an image
-* **Hough transform**   - An  algorithm to identify location of lane lines on the Road
-* **Linear regression** - TO find the best relationship between a group of lane points
+The pipeline is as follows:
+1. Apply a Gaussian smoothing algorithm to cleanup the image and noise removal
+2. convert the image to grayscale
+3. Apply Canny edge detection algorithm to detects the edges
+4. Apply an image mask to get "region of interest" in front of the vehicle
+5. Apply Hough ransform algorith to identify the location of lane lines
+8. Using the extrema of the lines generated, create two averaged lines 
+9. Create two averaged lines across frames for a smooth video playback
+10. Draw the lines to each frame
+
+---
+
+## Getting Started
+To develop this simple lane detection, then apply this pipeline to the test images provided and make a full video with lanes lines getting projected
+
+**I have leveraged some of the below popular algorithms and packages:**
+- `OpenCV` - Algorithms for Computer Vision 
+    - `cv2.inRange()` for color selection  
+    - `cv2.fillPoly()` for regions selection  
+    - `cv2.line()` to draw lines on an image given endpoints  
+    - `cv2.addWeighted()` to coadd / overlay two images 
+    - `cv2.cvtColor()` to grayscale or change color 
+    - `cv2.imwrite()` to output images to file  
+    - `cv2.bitwise_and()` to apply a mask to an image 
+- `NumPy` - Algorithms for Scientifc computation 
+- `SciPy` - Algorithms for Scientifc computation 
+- `Matplotlib` - A Python 2D plotting library 
+- `Pyplot` - A Python library for interactive plot generation 
+- `Gaussian blur` - Algorithms for Image processing 
+- `Canny` - Algorithm for edge detection in an image 
+- `Hough transform` - An algorithm to identify location of lane lines on the Road
 
 ## Prerequisites
 * Set up the CarND Term1 Starter Kit in conda enviornment
@@ -54,10 +79,9 @@ Figure 1.1: An Unprocess Frame
 
 Figure 1.2: A frame with lanes automatically indicated
 
-## Lane Detection Pipeline
-Below are the steps involved in my Lane Detection Pipeline.
 
-### 0. Read the image file
+
+## Preprocessing
 ```
 #importing some useful packages
 import matplotlib.pyplot as plt
@@ -75,7 +99,18 @@ plt.imshow(image)
 
 ```
 
-### 1. Image cleanup and noise removal
+## Lane Detection Pipeline
+The pipeline is as follows:
+1. Apply a Gaussian smoothing algorithm to cleanup the image and noise removal
+2. convert the image to grayscale
+3. Apply Canny edge detection algorithm to detects the edges
+4. Apply an image mask to get "region of interest" in front of the vehicle
+5. Apply Hough ransform algorith to identify the location of lane lines
+8. Using the extrema of the lines generated, create two averaged lines 
+9. Create two averaged lines across frames for a smooth video playback
+10. Draw the lines to each frame
+
+### 1. Apply a Gaussian smoothing algorithm to cleanup the image and noise removal
 I used Gaussian blur algorithm to clean up the image. 
 Gaussian blur algorithm is applied to remove the noise and tiny details from the image such as distant objects that are irrelevant for our purpose
 
@@ -95,6 +130,8 @@ plt.imshow(gausBlur)
 
 ```
 ![figure 2- blur filter applied to image](https://user-images.githubusercontent.com/12469124/34318439-831966be-e795-11e7-9f78-e275c01042ad.jpeg)
+
+![gray_blur](https://user-images.githubusercontent.com/12469124/34328786-007d49c8-e8b7-11e7-9d7b-8cdc41c52b0b.jpeg)
 
 figure 2- blur filter applied to image
 
@@ -118,9 +155,11 @@ plt.imshow(gray,cmap='gray')
 ```
 ![figure 3- grayscale transformation applied to blurred image](https://user-images.githubusercontent.com/12469124/34318440-839b6948-e795-11e7-962e-fc6ac2db520e.jpeg)
 
+![gray_scaled](https://user-images.githubusercontent.com/12469124/34328787-047256b8-e8b7-11e7-8976-122728952411.jpeg)
+
 figure 3- grayscale transformation applied to blurred image
 
-### 3. Detect the edges
+### 3. Apply Canny edge detection algorithm to detects the edges
 I applied the Canny edge detection algorithm which detects edges on a picture by looking for quick changes in color between a pixel and its neighbors. 
 The blur and grayscale step will help make the main lane lines stand out. 
 The result will give a black and white image. 
@@ -144,9 +183,11 @@ plt.imshow(edges)
 ```
 ![figure 4- canny edge detection applied to grayscale image](https://user-images.githubusercontent.com/12469124/34318441-8407b404-e795-11e7-95bc-ec7650503044.jpeg)
 
+![detect_edges](https://user-images.githubusercontent.com/12469124/34328788-093f4b42-e8b7-11e7-91c7-c391ca5cc547.jpeg)
+
 figure 4- canny edge detection applied to grayscale image
 
-### 4. Masking the region of interest
+### 4. Apply an image mask to get "region of interest" in front of the vehicle
 ```
 # Function to get the region of interest by applying an image mask
 # Only keeps the region of the image defined by the polygon formed from `vertices`. 
@@ -191,9 +232,11 @@ plt.imshow(masked_img)
 ```
 ![figure 5- masking the region of interest](https://user-images.githubusercontent.com/12469124/34318442-8440ab10-e795-11e7-910f-8c14953ec46a.jpeg)
 
+![regionofinterest](https://user-images.githubusercontent.com/12469124/34328790-0f478892-e8b7-11e7-9045-754b62a8c1f6.jpeg)
+
 figure 5- masking the region of interest
 
-### 5. Identify the location of lane lines on the road
+### 5. Apply Hough ransform algorith to identify the location of lane lines
 The Hough transform algorithm is applied-
 to extracts all the lines passing through each of our edge points
 group them by similarity 
@@ -213,30 +256,11 @@ lines = hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap)
 ```
 ![figure 6- hough transformation returns a list of lines](https://user-images.githubusercontent.com/12469124/34318443-8480b188-e795-11e7-96df-d056f4656136.jpeg)
 
+![houghed_image](https://user-images.githubusercontent.com/12469124/34328789-0c7d8756-e8b7-11e7-9a25-dd2803f473fd.jpeg)
+
 figure 6- hough transformation returns a list of lines
 
-### 6. Separate  the lines
-The Hough transformation gives us back multiple lines.
-So we need to pick  only two distinct lanes - left and right lane markeres for our car to drive in between. 
-
-The lines are organised by its slope. Positive slopes are for the right lane and negative slopes are for the left lane.
-
-
-```
-def separate_lines(lines):
-    right = []
-    left = []
-    for x1,y1,x2,y2 in lines[:, 0]:
-        m = get_slope(x1,y1,x2,y2)
-        if m >= 0:
-            right.append([x1,y1,x2,y2,m])
-        else:
-            left.append([x1,y1,x2,y2,m])
-    return right, left
-right_lines, left_lines = separate_lines(lines)
-```
-
-### 7. Reject the outliers
+### 6. remove the outliers
 reject lines with unacceptable slopes that throw off the intended slope of each line.
 
 ```
@@ -250,49 +274,7 @@ if len(right_lines) != 0 and len(left_lines) != 0:
     left = reject_outliers(left_lines, cutoff=(-0.85, -0.6))
 ```
 
-### 8. Merge left and right lanes  using linear regression.
-
-```
-def lines_linreg(lines_array):
-    x = np.reshape(lines_array[:, [0, 2]], (1, len(lines_array) * 2))[0]
-    y = np.reshape(lines_array[:, [1, 3]], (1, len(lines_array) * 2))[0]
-    A = np.vstack([x, np.ones(len(x))]).T
-    m, c = np.linalg.lstsq(A, y)[0]
-    x = np.array(x)
-    y = np.array(x * m + c)
-    return x, y, m, c
-
-x, y, m, c = lines_linreg(lines)
-# This variable represents the top-most point in the image where we can reasonable draw a line to.
-min_y = np.min(y)
-# Calculate the top point using the slopes and intercepts we got from linear regression.
-top_point = np.array([(min_y - c) / m, min_y], dtype=int)
-# Repeat this process to find the bottom left point.
-max_y = np.max(y)
-bot_point = np.array([(max_y - c) / m, max_y], dtype=int)
-
-```
-
-### 9. Span the Lines
-Using some simple geometry (y = mx + b), calculate extrema. 
-I used the result of the linear regression to extrapolate to those extrema. 
-I then extended the left and right lines off across the image and clip the line using our previous region of interest.
-
-```
-def extend_point(x1, y1, x2, y2, length):
-    line_len = np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
-    x = x2 + (x2 - x1) / line_len * length
-    y = y2 + (y2 - y1) / line_len * length
-    return x, y
-x1e, y1e = extend_point(bot_point[0],bot_point[1],top_point[0],top_point[1], -1000) # bottom point
-x2e, y2e = extend_point(bot_point[0],bot_point[1],top_point[0],top_point[1],  1000) # top point
-# return the line.
-line = np.array([[x1e,y1e,x2e,y2e]])
-return np.array([line], dtype=np.int32)
-
-```
-
-### 10. Draw the lines and return the final image
+### 7. Draw the lines to each frame
 The final step is to superimpose the left and right lines onto the original image to visually validate the correctness and accuracy of our pipeline implementation.
 
 ```
@@ -306,12 +288,12 @@ return final_image
 ``` 
 ![figure 7- masking the region of interest](https://user-images.githubusercontent.com/12469124/34318444-84bb9780-e795-11e7-9b0b-275e86fd01e0.jpeg)
 
+![weighted_image](https://user-images.githubusercontent.com/12469124/34328791-11538f00-e8b7-11e7-9f99-16eed5006675.jpeg)
+
 figure 7- masking the region of interest
 
 ## Potential shortcomings with the current pipeline
 One potential shortcoming would be that  we decided to discard color information and rely exclusively on pixel brightness to detect lane marking on the road. It works well during daylight and with a simple terrain but  the lane detection accuracy might drop significantly in less ideal conditions.
-
-
 
 ## possible improvements to the pipeline
 
