@@ -90,13 +90,15 @@ Figure 1.2: A frame with lanes automatically indicated
 ## The Pipeline
 The pipeline is as follows:
 1. Apply a Gaussian smoothing algorithm to cleanup the image and noise removal
-2. convert the image to grayscale
+2. Convert the image to grayscale
 3. Apply Canny edge detection algorithm to detects the edges
 4. Apply an image mask to get "region of interest" in front of the vehicle
 5. Apply Hough ransform algorith to identify the location of lane lines
-8. Using the extrema of the lines generated, create two averaged lines 
-9. Create two averaged lines across frames for a smooth video playback
-10. Draw the lines to each frame
+6. Get the list of lines and line slopes for averaging
+7. Average the line positions
+8. Remove outlier slopes from the line averaging
+9. Extrapolate the line boundaries
+10. get the final image with the weighted average
 
 ### 1. Apply a Gaussian smoothing algorithm to cleanup the image and noise removal
 I used Gaussian blur algorithm to clean up the image. 
@@ -253,7 +255,7 @@ lines = cv2.HoughLinesP(masked_img, rho, theta, threshold, np.array([]), min_lin
 
 figure 6- hough transformation returns a list of lines
 
-### 6. Make lists of the lines and slopes for averaging
+### 6. Get the list of lines and line slopes for averaging
 ```
 left_lines = []
     left_slopes = []
@@ -277,7 +279,7 @@ avg_left_pos = [sum(col)/len(col) for col in zip(*left_lines)]
 avg_right_pos = [sum(col)/len(col) for col in zip(*right_lines)]
 ```
 
-### 8. Removing outlier slopes from the averaging performed below in lane_lines
+### 8. Remove outlier slopes from the line averaging 
 reject lines with unacceptable slopes that throw off the intended slope of each line.
 
 ```
@@ -296,7 +298,7 @@ avg_right_slope = np.mean(remove_outliers(right_slopes))
     
 ```
 
-### 9. Extrapolate to the mask boundaries 
+### 9. Extrapolate the line boundaries 
 ```
 #Average the left line
 avg_left_line = []
@@ -320,7 +322,7 @@ lines = [[avg_left_line], [avg_right_line]]
 ```
 
 
-### 10. Draw the lines to each frame
+### 10. get the final image with the weighted average
 The final step is to superimpose the left and right lines onto the original image to visually validate the correctness and accuracy of our pipeline implementation.
 
 ```
