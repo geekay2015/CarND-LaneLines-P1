@@ -296,7 +296,7 @@ avg_right_slope = np.mean(remove_outliers(right_slopes))
     
 ```
 
-### 8. Extrapolate to our mask boundaries 
+### 9. Extrapolate to the mask boundaries 
 ```
 #Average the left line
 avg_left_line = []
@@ -320,7 +320,7 @@ lines = [[avg_left_line], [avg_right_line]]
 ```
 
 
-### 7. Draw the lines to each frame
+### 10. Draw the lines to each frame
 The final step is to superimpose the left and right lines onto the original image to visually validate the correctness and accuracy of our pipeline implementation.
 
 ```
