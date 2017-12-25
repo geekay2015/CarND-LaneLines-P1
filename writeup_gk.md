@@ -79,11 +79,9 @@ plt.imshow(image)
 ```
 
 ## Unprocessed Frame Vs A frame with lanes automatically indicated
-![Figure 1.1: An Unprocess Frame](https://user-images.githubusercontent.com/12469124/34318397-990c2444-e794-11e7-8187-bd2c60a801d6.jpeg) 
+![testimage](https://user-images.githubusercontent.com/12469124/34333603-93ef373e-e90c-11e7-94cc-181c7ed202fd.jpeg)
 
 Figure 1.1: An Unprocess Frame
-
-![Figure 1.2: A frame with lanes automatically indicated](https://user-images.githubusercontent.com/12469124/34318399-a053c3b0-e794-11e7-9398-8f02108bdf5b.jpeg)
 
 ![weighted_image](https://user-images.githubusercontent.com/12469124/34328791-11538f00-e8b7-11e7-9f99-16eed5006675.jpeg)
 
