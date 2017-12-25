@@ -85,6 +85,8 @@ Figure 1.1: An Unprocess Frame
 
 ![Figure 1.2: A frame with lanes automatically indicated](https://user-images.githubusercontent.com/12469124/34318399-a053c3b0-e794-11e7-9398-8f02108bdf5b.jpeg)
 
+![weighted_image](https://user-images.githubusercontent.com/12469124/34328791-11538f00-e8b7-11e7-9f99-16eed5006675.jpeg)
+
 Figure 1.2: A frame with lanes automatically indicated
 
 ## The Pipeline
