@@ -108,17 +108,17 @@ def gaussian_blur(image, kernel_size):
     return cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)
 
 # Define a kernel size and 
-kernel_size = 5
+kernel_size = 9
 
 # apply Gaussian smoothing
 gray_blur = gaussian_blur(image, kernel_size)
 
+# Save the image
+mpimg.imsave("test_images_output/gray_blur.jpeg",gray_blur)
+
 # plot the image
 plt.imshow(gausBlur)
-
 ```
-
-![figure 2- blur filter applied to image](https://user-images.githubusercontent.com/12469124/34318439-831966be-e795-11e7-9f78-e275c01042ad.jpeg)
 
 ![gray_blur](https://user-images.githubusercontent.com/12469124/34328932-5a6ae008-e8bc-11e7-8f36-5dfa8405569d.jpeg)
 
@@ -130,20 +130,22 @@ highlight pixels with a higher brightness value, including the ones defining mar
 
 I used cv2.cvtColor a Grayscale Image Convertor function with parameters - image and cv2.COLOR_BGR2GRAY
 ```
-# Define aFunction to convert the image to grayscale
+# Define a Function to convert the image to grayscale
 # This will return an image with only one color channel
 def gray_scale_transform(image):
-    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    #use BGR2GRAY if you read an image with cv2.imread()
+    #return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    return cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
 # Apply the gray scale transformation
-gray = gray_scale_transform(gray_blur)
+grayscaled = gray_scale_transform(gray_blur)
+
+mpimg.imsave("test_images_output/gray_scaled1.jpeg",grayscaled)
 
 # plot the image
 plt.imshow(gray,cmap='gray')
 
 ```
-![figure 3- grayscale transformation applied to blurred image](https://user-images.githubusercontent.com/12469124/34318440-839b6948-e795-11e7-962e-fc6ac2db520e.jpeg)
-
 ![gray_scaled](https://user-images.githubusercontent.com/12469124/34328933-5c089cfc-e8bc-11e7-9df5-0db1070981d8.jpeg)
 
 figure 3- grayscale transformation applied to blurred image
@@ -164,13 +166,15 @@ low_threshold = 50
 high_threshold = 150
 
 #Apply the cany transformation
-edges = detect_edges(gray, low_threshold,high_threshold)
+edges = detect_edges(grayscaled, low_threshold,high_threshold)
+
+# Save the image
+mpimg.imsave("test_images_output/detect_edges.jpeg",edges)
 
 # plot the image
 plt.imshow(edges)
 
 ```
-![figure 4- canny edge detection applied to grayscale image](https://user-images.githubusercontent.com/12469124/34318441-8407b404-e795-11e7-95bc-ec7650503044.jpeg)
 
 ![detect_edges](https://user-images.githubusercontent.com/12469124/34328788-093f4b42-e8b7-11e7-91c7-c391ca5cc547.jpeg)
 
@@ -200,20 +204,16 @@ def region_of_interest(image, vertices):
     masked_image = cv2.bitwise_and(image, mask)
     return masked_image
 
-# get the parameters for the vertices
-xsize = image.shape[1]
-ysize = image.shape[0]
-dx1 = int(0.0725 * xsize)
-dx2 = int(0.425 * xsize)
-dy = int(0.6 * ysize)
-
-
+# Now the masking
 # calculate vertices for region of interest
-vertices = np.array([[(dx1, ysize), (dx2, dy), (xsize - dx2, dy), (xsize - dx1, ysize)]], dtype=np.int32)
-
+imshape = image.shape
+vertices = np.array([[(0,imshape[0]),(450, 325), (550, 325), (imshape[1],imshape[0])]], dtype=np.int32)
 
 # return the image only where mask pixels are nonzero
 masked_img = region_of_interest(edges, vertices)
+
+# Save the image
+mpimg.imsave("test_images_output/RegionOfInterest.jpeg",masked_img)
 
 # plot the image
 plt.imshow(masked_img)
@@ -233,36 +233,104 @@ The HoughLinesP function in OpenCV returns an array of lines organized by endpoi
 def hough_lines(image, rho, theta, threshold, min_line_len, max_line_gap):
     lines = cv2.HoughLinesP(image, rho, theta, threshold, np.array([]), minLineLength=min_line_len, maxLineGap=max_line_gap)
     return lines
-rho = 0.8
-theta = np.pi/180
-threshold = 25
-min_line_len = 50
-max_line_gap = 200
+    
+# Define the Hough transform parameters
+# Make a blank the same size as our image to draw on
+# hough lines
+rho = 5 # distance resolution in pixels of the Hough grid
+theta = np.pi/30 # angular resolution in radians of the Hough grid
+threshold = 50     # minimum number of votes (intersections in Hough grid cell)
+min_line_len = 25 #minimum number of pixels making up a line
+max_line_gap = 25    # maximum gap in pixels between connectable line segments
+line_image = np.copy(image)*0 # creating a blank to draw lines on
 
-lines = hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap)
+# Run Hough on edge detected image
+# Output "lines" is an array containing endpoints of detected line segments
+#lines = hough_lines(masked_img, rho, theta, threshold, min_line_len, max_line_gap)
+lines = cv2.HoughLinesP(masked_img, rho, theta, threshold, np.array([]), min_line_len, max_line_gap)
 ```
 ![houghed_image](https://user-images.githubusercontent.com/12469124/34328789-0c7d8756-e8b7-11e7-9a25-dd2803f473fd.jpeg)
 
 figure 6- hough transformation returns a list of lines
 
-### 6. remove the outliers
+### 6. Make lists of the lines and slopes for averaging
+```
+left_lines = []
+    left_slopes = []
+    right_lines = []
+    right_slopes = []
+    
+    for line in lines:
+        for x1,y1,x2,y2 in line:
+            slope = (y2-y1)/(x2-x1)
+            if slope < 0:
+                left_lines.append(line)
+                left_slopes.append(slope)
+            else:
+                right_lines.append(line)
+                right_slopes.append(slope)
+```
+
+### 7. Average line positions
+```
+avg_left_pos = [sum(col)/len(col) for col in zip(*left_lines)]
+avg_right_pos = [sum(col)/len(col) for col in zip(*right_lines)]
+```
+
+### 8. Removing outlier slopes from the averaging performed below in lane_lines
 reject lines with unacceptable slopes that throw off the intended slope of each line.
 
 ```
-def reject_outliers(data, cutoff, thresh=0.08):
-    data = np.array(data)
-    data = data[(data[:, 4] >= cutoff[0]) & (data[:, 4] <= cutoff[1])]
-    m = np.mean(data[:, 4], axis=0)
-    return data[(data[:, 4] <= m+thresh) & (data[:, 4] >= m-thresh)]
-if len(right_lines) != 0 and len(left_lines) != 0:
-    right = reject_outliers(right_lines,  cutoff=(0.45, 0.75))
-    left = reject_outliers(left_lines, cutoff=(-0.85, -0.6))
+#Removing outlier slopes from the averaging performed below in lane_lines
+def remove_outliers(slopes, m = 2):
+    med = np.mean(slopes)
+    stand_dev = np.std(slopes)
+    for slope in slopes:
+        if abs(slope - med) > (m * stand_dev):
+            slopes.remove(slope)
+    return slopes
+
+#Remove slope outliers, and take the average
+avg_left_slope = np.mean(remove_outliers(left_slopes))
+avg_right_slope = np.mean(remove_outliers(right_slopes))
+    
 ```
+
+### 8. Extrapolate to our mask boundaries 
+```
+#Average the left line
+avg_left_line = []
+for x1,y1,x2,y2 in avg_left_pos:
+    x = int(np.mean([x1, x2])) #Midpoint x
+    y = int(np.mean([y1, y2])) #Midpoint y
+    slope = avg_left_slope
+    b = -(slope * x) + y #Solving y=mx+b for b
+    avg_left_line = [int((325-b)/slope), 325, int((539-b)/slope), 539] #Line for the image 
+
+#Average the right line
+avg_right_line = []
+for x1,y1,x2,y2 in avg_right_pos:
+    x = int(np.mean([x1, x2]))
+    y = int(np.mean([y1, y2]))
+    slope = avg_right_slope
+    b = -(slope * x) + y
+    avg_right_line = [int((325-b)/slope), 325, int((539-b)/slope), 539]
+   
+lines = [[avg_left_line], [avg_right_line]] 
+```
+
 
 ### 7. Draw the lines to each frame
 The final step is to superimpose the left and right lines onto the original image to visually validate the correctness and accuracy of our pipeline implementation.
 
 ```
+# Draw the lines
+def draw_lines(img, lines, color=[255, 0, 0], thickness=10):
+    for line in lines:
+        for x1,y1,x2,y2 in line:
+            cv2.line(img, (x1, y1), (x2, y2), color, thickness)
+
+# Weighted Average            
 def weighted_image(image, initial_image, α=0.8, β=1., λ=0.):
     return cv2.addWeighted(initial_image, α, image, β, λ)
 line_image = np.copy((image)*0)
@@ -270,11 +338,20 @@ draw_lines(line_image, lines, thickness=3)
 line_image = region_of_interest(line_image, vertices)
 final_image = weighted_image(line_image, image)
 return final_image
+
+draw_lines(line_image, lines)
+
+# Transparent lines
+line_edges = weighted_image(line_image, image)
+
+return line_edges
 ``` 
 
 ![weighted_image](https://user-images.githubusercontent.com/12469124/34328791-11538f00-e8b7-11e7-9f99-16eed5006675.jpeg)
 
 figure 7- masking the region of interest
+
+
 
 ## Potential shortcomings with the current pipeline
 One potential shortcoming would be that  we decided to discard color information and rely exclusively on pixel brightness to detect lane marking on the road. It works well during daylight and with a simple terrain but  the lane detection accuracy might drop significantly in less ideal conditions.
@@ -287,6 +364,7 @@ Using hue and saturation values, not how dark a pixel is, will ensure lines of a
 Create two color filters that will extract the whites and yellows in the image and apply them to turn black any other pixels.
 
 ```
+# TO DO
 def filter_image(image):
     hsv_image = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
     sensitivity = 51
